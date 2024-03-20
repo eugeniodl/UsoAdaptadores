@@ -8,8 +8,8 @@ namespace BinaryAdapters
 {
     public interface IPersonRepository
     {
-        Person GetPerson(int id);
         IEnumerable<Person> GetAll();
+        Person GetPerson(int id);
         void Add(Person person);
         void Update(Person person);
         void Delete(int id);

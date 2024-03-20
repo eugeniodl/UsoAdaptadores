@@ -15,7 +15,8 @@ namespace BinaryAdapters
 
         public Person() : this(0, string.Empty, 0, 0) { }
 
-        public Person(int id, string name, int age, double height)
+        public Person(int id, string name, int age,
+            double height)
         {
             Id = id;
             Name = name;
