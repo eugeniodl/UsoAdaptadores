@@ -12,8 +12,9 @@ namespace BinaryAdapters
 
         public PersonBinaryRepository(string filePath)
         {
-            _filePath = filePath;            
+            _filePath = filePath;
         }
+
         public void Add(Person person)
         {
             List<Person> people = GetAll().ToList();
@@ -27,24 +28,25 @@ namespace BinaryAdapters
         {
             try
             {
-                using (FileStream fs = new FileStream(_filePath,
-            FileMode.Create))
-                using (BinaryWriter writer = new BinaryWriter(fs))
+                using (var stream = new FileStream(_filePath, FileMode.Create))
                 {
-                    foreach (Person person in people)
+                    using (BinaryWriter bw = new BinaryWriter(stream))
                     {
-                        writer.Write(person.Id);
-                        writer.Write(person.Name);
-                        writer.Write(person.Age);
-                        writer.Write(person.Height);
-                    }
+                        foreach (Person person in people)
+                        {
+                            bw.Write(person.Id);
+                            bw.Write(person.Name);
+                            bw.Write(person.Age);
+                            bw.Write(person.Height);
+                        }
 
-                    writer.Flush();
+                        bw.Flush();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error al guardar personas {ex.Message}");
+                Console.WriteLine($"Error al guardar personas: {ex.Message}");
             }
         }
 
@@ -64,28 +66,25 @@ namespace BinaryAdapters
 
             try
             {
-                using (FileStream fs = new FileStream(_filePath,
-            FileMode.Open))
-                using (BinaryReader reader = new BinaryReader(fs))
+                using (Stream fs = new FileStream(_filePath, FileMode.Open))
+                using (BinaryReader br = new BinaryReader(fs))
                 {
-                    while (reader.BaseStream.Position < reader.BaseStream.Length)
+                    while (br.BaseStream.Position < br.BaseStream.Length)
                     {
-                        int id = reader.ReadInt32();
-                        string name = reader.ReadString();
-                        int age = reader.ReadInt32();
-                        double height = reader.ReadDouble();
+                        int id = br.ReadInt32();
+                        string name = br.ReadString();
+                        int age = br.ReadInt32();
+                        double height = br.ReadDouble();
                         people.Add(new Person(id, name, age, height));
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine( $"Error al leer personas:" +
-                    $" {ex.Message}");
+
+                Console.WriteLine($"Error al leer las personas: {ex.Message}");
             }
-
-
-            return people;
+                return people;
         }
 
         public Person GetPerson(int id)
